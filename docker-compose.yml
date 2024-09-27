@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  api-gateway-8080:
+    container_name: api-gateway-8080
+    build: ./api_gateway_8080  # build using Dockerfile
+    ports:
+      - 8080:8080
+    networks:
+      - node-network
+
+  notify-service:
+    container_name: notify-service
+    build: ./notify_service  
+    networks:
+      - node-network
+
+  order-service:
+    container_name: order-service
+    build: ./order_service  
+    environment:
+      - DATABASE_URL=postgresql://postgres:1234@amazon_db:5432/amazon_db
+      - REDIS_HOST=some-redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=1234
+      - REDIS_TTL=5000
+    networks:
+      - node-network
+
+  shipping-service:
+    container_name: shipping-service
+    build: ./shipping_service  
+    networks:
+      - node-network
+  
+networks:
+  node-network:
+    external: true
